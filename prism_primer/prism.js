@@ -49,33 +49,25 @@ for i < sigma {
 
 */
 
-
-const pSigma = (s) => {
-    return 0.5;
+function generateRule(dataSet) {
+    
 }
 
-const iSigma = (ps) => {
-    return Math.log2(1/ps);
+function removeCoveredInstances(dataSet, rule) {
+
 }
 
 
-
-for(let currSigma = 1; currSigma <= sigma; i++) {
+let ruleList = [];
+for(let currClass = 1; currClass <= sigma; i++) {
 
     let dataSet = getDataSet();
 
     // repeating this action until the dataset does not contain any more instances of sigma classification
-    while(dataSet.filter(element => element.classification === currSigma).length > 0) {
-        let ps = pSigma(currSigma);
-        let is = iSigma(ps);
-        let totalInfo = 0;
-        let max = { p: 0, count: 0 };
-
-        for(let i = 0; i < alfa.length; i++) {
-            for(let j = 0; j < alfa[i]; j++) {
-
-            }
-        }
+    while(dataSet.filter(element => element.classification === currClass).length > 0) {
+        let { rule, covered } = generateRule(dataSet); // [ { a: Number, value: Number } ]
+        ruleList.push({ class: currClass, rule: rule});
+        dataSet = removeCoveredInstances(dataSet, rule);
     }
 
 }

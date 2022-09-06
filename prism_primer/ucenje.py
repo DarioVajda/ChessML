@@ -6,34 +6,35 @@ sigma = 3 # number of classifications
 
 alfa = [ 3, 2, 2, 2 ]
 
-dataSet = [
-    { "input": [ 1, 1, 1, 2 ], "classification": 2 },
-    { "input": [ 1, 1, 1, 1 ], "classification": 3 },
-    { "input": [ 1, 1, 2, 2 ], "classification": 1 },
-    { "input": [ 1, 1, 2, 1 ], "classification": 3 },
-    { "input": [ 1, 2, 1, 1 ], "classification": 3 },
-    { "input": [ 1, 2, 1, 2 ], "classification": 2 },
-    { "input": [ 1, 2, 2, 1 ], "classification": 3 },
-    { "input": [ 1, 2, 2, 2 ], "classification": 1 },
-    { "input": [ 2, 1, 1, 1 ], "classification": 3 },
-    { "input": [ 2, 1, 1, 2 ], "classification": 2 },
-    { "input": [ 2, 1, 2, 1 ], "classification": 3 },
-    { "input": [ 2, 1, 2, 2 ], "classification": 1 },
-    { "input": [ 2, 2, 1, 1 ], "classification": 3 },
-    { "input": [ 2, 2, 1, 2 ], "classification": 2 },
-    { "input": [ 2, 2, 2, 1 ], "classification": 3 },
-    { "input": [ 2, 2, 2, 2 ], "classification": 3 },
-    { "input": [ 3, 1, 1, 1 ], "classification": 3 },
-    { "input": [ 3, 1, 1, 2 ], "classification": 3 },
-    { "input": [ 3, 1, 2, 1 ], "classification": 3 },
-    { "input": [ 3, 1, 2, 2 ], "classification": 1 },
-    { "input": [ 3, 2, 1, 1 ], "classification": 3 },
-    { "input": [ 3, 2, 1, 2 ], "classification": 2 },
-    { "input": [ 3, 2, 2, 1 ], "classification": 3 },
-    { "input": [ 3, 2, 2, 2 ], "classification": 3 }
-]
+def getDataSet():
+    return [
+        { "input": [ 1, 1, 1, 2 ], "classification": 2 },
+        { "input": [ 1, 1, 1, 1 ], "classification": 3 },
+        { "input": [ 1, 1, 2, 2 ], "classification": 1 },
+        { "input": [ 1, 1, 2, 1 ], "classification": 3 },
+        { "input": [ 1, 2, 1, 1 ], "classification": 3 },
+        { "input": [ 1, 2, 1, 2 ], "classification": 2 },
+        { "input": [ 1, 2, 2, 1 ], "classification": 3 },
+        { "input": [ 1, 2, 2, 2 ], "classification": 1 },
+        { "input": [ 2, 1, 1, 1 ], "classification": 3 },
+        { "input": [ 2, 1, 1, 2 ], "classification": 2 },
+        { "input": [ 2, 1, 2, 1 ], "classification": 3 },
+        { "input": [ 2, 1, 2, 2 ], "classification": 1 },
+        { "input": [ 2, 2, 1, 1 ], "classification": 3 },
+        { "input": [ 2, 2, 1, 2 ], "classification": 2 },
+        { "input": [ 2, 2, 2, 1 ], "classification": 3 },
+        { "input": [ 2, 2, 2, 2 ], "classification": 3 },
+        { "input": [ 3, 1, 1, 1 ], "classification": 3 },
+        { "input": [ 3, 1, 1, 2 ], "classification": 3 },
+        { "input": [ 3, 1, 2, 1 ], "classification": 3 },
+        { "input": [ 3, 1, 2, 2 ], "classification": 1 },
+        { "input": [ 3, 2, 1, 1 ], "classification": 3 },
+        { "input": [ 3, 2, 1, 2 ], "classification": 2 },
+        { "input": [ 3, 2, 2, 1 ], "classification": 3 },
+        { "input": [ 3, 2, 2, 2 ], "classification": 3 }
+    ]
 
-
+dataSet = getDataSet()
 
 """
 
@@ -59,7 +60,7 @@ def checkIfSatisfies(rules, element):
     return True
 
 def filterDataSet(rules):
-    res = list(filter(lambda x: checkIfSatisfies(rules, x), dataSet))
+    res = list(filter(lambda x: checkIfSatisfies(rules, x), getDataSet()))
     return res
 
 
@@ -94,7 +95,7 @@ def iSigmaAlfa(s, a, aValue, rules):
     psa = pSigmaAlfa(s, a, aValue, rules)
     ps = pSigma(s, rules)
 
-    print(s, a+1, aValue+1, 'ps', ps, 'psa', psa)
+    # print(s, a+1, aValue+1, 'ps', ps, 'psa', psa)
 
     if psa["value"] == 0:
         return { "info": 0, "count": 0 }
@@ -103,41 +104,17 @@ def iSigmaAlfa(s, a, aValue, rules):
 
 ruleList = []
 for currSigma in range(1, sigma + 1):
-    dataSet = [
-        { "input": [ 1, 1, 1, 2 ], "classification": 2 },
-        { "input": [ 1, 1, 1, 1 ], "classification": 3 },
-        { "input": [ 1, 1, 2, 2 ], "classification": 1 },
-        { "input": [ 1, 1, 2, 1 ], "classification": 3 },
-        { "input": [ 1, 2, 1, 1 ], "classification": 3 },
-        { "input": [ 1, 2, 1, 2 ], "classification": 2 },
-        { "input": [ 1, 2, 2, 1 ], "classification": 3 },
-        { "input": [ 1, 2, 2, 2 ], "classification": 1 },
-        { "input": [ 2, 1, 1, 1 ], "classification": 3 },
-        { "input": [ 2, 1, 1, 2 ], "classification": 2 },
-        { "input": [ 2, 1, 2, 1 ], "classification": 3 },
-        { "input": [ 2, 1, 2, 2 ], "classification": 1 },
-        { "input": [ 2, 2, 1, 1 ], "classification": 3 },
-        { "input": [ 2, 2, 1, 2 ], "classification": 2 },
-        { "input": [ 2, 2, 2, 1 ], "classification": 3 },
-        { "input": [ 2, 2, 2, 2 ], "classification": 3 },
-        { "input": [ 3, 1, 1, 1 ], "classification": 3 },
-        { "input": [ 3, 1, 1, 2 ], "classification": 3 },
-        { "input": [ 3, 1, 2, 1 ], "classification": 3 },
-        { "input": [ 3, 1, 2, 2 ], "classification": 1 },
-        { "input": [ 3, 2, 1, 1 ], "classification": 3 },
-        { "input": [ 3, 2, 1, 2 ], "classification": 2 },
-        { "input": [ 3, 2, 2, 1 ], "classification": 3 },
-        { "input": [ 3, 2, 2, 2 ], "classification": 3 }
-    ]
+    dataSet = getDataSet()
 
 
     iteration = 0
     while len(list(filter(lambda x: x["classification"] == currSigma, dataSet))) > 0:
 
-        for element in dataSet:
-            print(element)
-        print()
+        # for element in dataSet:
+        #     print(element)
+        # print()
         print('iter', iteration)
+        if(iteration > 1): break
         iteration += 1
 
         totalInfo = 0
@@ -147,12 +124,14 @@ for currSigma in range(1, sigma + 1):
 
         while abs(totalInfo - sigmaInfo) > 1e-4 :
         # while len(list(filter(lambda x: x["classification"] == currSigma, dataSet))) < len(dataSet) :
-            print(len(list(filter(lambda x: x["classification"] == currSigma, dataSet))), len(dataSet))
+            # print(len(list(filter(lambda x: x["classification"] == currSigma, dataSet))), len(dataSet))
+            print()
 
             tempRule = { "alfa" : -1, "alfaValue": -1, "info": 0, "count": 0}
+            # TREBAM DA NADJEM NACIN NA KOJI NECE DA SE UZIMAJU U OBZIR ISTI PARAMETRI KAO U PROSLOJ ITERACIJI WHILE PETLJE
             for i in range(0, len(alfa)):
                 if i+1 in map(lambda x: x["alfa"], rules):
-                    for j in range(0, alfa[i]): print('continue')
+                    # for j in range(0, alfa[i]): print('continue')
                     continue
 
                 for j in range(0, alfa[i]):
@@ -163,16 +142,19 @@ for currSigma in range(1, sigma + 1):
 
             totalInfo += tempRule["info"]
 
-            print('sigmaInfo', sigmaInfo, 'totalInfo', totalInfo, 'tempRule', tempRule)
-            print()
+            # print('sigmaInfo', sigmaInfo, 'totalInfo', totalInfo, 'tempRule', tempRule)
+            # print()
 
             rules.append({ "alfa": tempRule["alfa"], "alfaValue": tempRule["alfaValue"] })
 
         ruleList.append({ "rules": rules, "classification": currSigma })
 
+        print(rules)
         for i in range(0, len(dataSet)):
             if checkIfSatisfies(rules, dataSet[i]):
                 dataSet[i] = False
+        
+        for e in dataSet: print(e)
 
         dataSet = list(filter(lambda x: x != False, dataSet))
 
