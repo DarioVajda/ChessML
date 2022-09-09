@@ -1,4 +1,15 @@
+from asyncio.windows_events import NULL
 import math
+
+
+
+
+def formatRule(rule):
+    alfaChars = ['a', 'b', 'c', 'd' ]
+    res = '  ' + str(rule["classification"]) + ' - '
+    for condition in rule["rules"]:
+        res = res + alfaChars[condition['alfa'] - 1] + str(condition['alfaValue']) + ' + '
+    return res[:-3]
 
 
 
@@ -92,28 +103,76 @@ def pSigma(s, rules):
 
     return len(tempList) / len(tempDataSet)
 
-def pSigmaAlfa(s, a, aValue, rules):
+def pSigmaAlfa(s, rules):
     tempDataSet = filterDataSet(rules)
-    aList = list(filter(lambda x: x["input"][a] == aValue + 1, tempDataSet))
-    aLen = len(aList)
-    sLen = len(list(filter(lambda x: x["classification"] == s, aList)))
+    R = {}
+    for i in range(0, len(alfa)):
+        R[i] = {}
+        for j in range(0, alfa[i]):
+            R[i][j] = { "aLen": 0, "sLen": 0 }
 
-    value = 0
-    if aLen != 0: value = sLen / aLen
-    return { "value": value, "count": aLen }
+    for e in tempDataSet:
+        for i in range(0, len(alfa)):
+            for j in range(0, alfa[i]):
+                if e["input"][i] == j+1:
+                    R[i][j]["aLen"] += 1
+                    if e["classification"] == s:
+                        R[i][j]["sLen"] += 1
+    
+    tempValue = NULL
+    for i in range(0, len(alfa)):
+        for j in range(0, alfa[i]):
+            e = R[i][j]
+            value = 0
+            if e["aLen"] != 0: value = e["sLen"] / e["aLen"]
+            temp = { "value": value, "count": e["aLen"] }
+            R[i][j] = temp
+    
+    # print()
+    # print()
+    # for i in R.keys():
+    #     print(f'{i}:' + ' {')
+    #     for j in R[i].keys():
+    #         print(' ', f'{j}:', R[i][j])
+    #     print('}')
+    return R
 
 
-def iSigma(s, rules):
-    return math.log(1 / pSigma(s, rules), 2)
+def iSigma(ps):
+    return math.log(1 / ps, 2)
 
-def iSigmaAlfa(s, a, aValue, rules):
-    psa = pSigmaAlfa(s, a, aValue, rules)
-    ps = pSigma(s, rules)
+def iSigmaAlfa(s, rules, ps):
+    psa = pSigmaAlfa(s, rules) # { alfa: { value: { alfa, alfaValue, info, count },... },... }
+
+    list = []
+    for i in range(0, len(alfa)):
+        if i+1 in map(lambda x: x["alfa"], conditions):
+            continue
+
+        for j in range(0, alfa[i]):
+            currPsa = psa[i][j]
+            # print(currPsa)
+            if currPsa["value"] == 0:
+                temp = {  "alfa" : i+1, "alfaValue": j+1, "info": 0, "count": 0 }
+            else:
+                temp = {  "alfa" : i+1, "alfaValue": j+1, "info": math.log(currPsa["value"] / ps, 2), "count": currPsa["count"] }
+            list.append(temp)
+    
+    return list
 
 
-    if psa["value"] == 0:
-        return { "info": 0, "count": 0 }
-    return { "info": math.log(psa["value"] / ps, 2), "count": psa["count"] }
+def findBestCondition(conditions, currSigma, sigmaProb):
+    # print(len(conditions))
+
+    condition = { "alfa" : -1, "alfaValue": -1, "info": 0, "count": 0}
+    choices = iSigmaAlfa(currSigma, conditions, sigmaProb)
+    for c in choices:
+        if c["info"] > condition["info"] or (c["info"] == condition["info"] and c["count"] > condition["count"]):
+            condition = c
+    
+    # print(condition)
+    return condition
+
 
 
 ruleList = []
@@ -127,25 +186,19 @@ for currSigma in range(1, sigma + 1):
         iteration += 1
 
         totalInfo = 0
-        sigmaInfo = iSigma(currSigma, [])
+        sigmaProb = pSigma(currSigma, [])
+        sigmaInfo = iSigma(sigmaProb)
 
         conditions = []
+        
+        # for e in ruleList:
+        #     print(formatRule(e))
 
         while abs(totalInfo - sigmaInfo) > 1e-4 :
-        # while len(list(filter(lambda x: x["classification"] == currSigma, dataSet))) < len(dataSet) :
-
-            tempRule = { "alfa" : -1, "alfaValue": -1, "info": 0, "count": 0}
-            for i in range(0, len(alfa)):
-                if i+1 in map(lambda x: x["alfa"], conditions):
-                    continue
-
-                for j in range(0, alfa[i]):
-                    temp = iSigmaAlfa(currSigma, i, j, conditions)
-                    if temp["info"] > tempRule["info"] or (temp["info"] == tempRule["info"] and temp["count"] > tempRule["count"]):
-                        tempRule = { "alfa": i+1, "alfaValue": j+1, "info": temp["info"], "count": temp["count"] }
-
+            
+            sigmaProb = pSigma(currSigma, conditions)
+            tempRule = findBestCondition(conditions, currSigma, sigmaProb)
             totalInfo += tempRule["info"]
-
             conditions.append({ "alfa": tempRule["alfa"], "alfaValue": tempRule["alfaValue"] })
 
         ruleList.append({ "rules": conditions, "classification": currSigma })
@@ -155,14 +208,6 @@ for currSigma in range(1, sigma + 1):
                 dataSet[i] = False
         
         dataSet = list(filter(lambda x: x != False, dataSet))
-
-
-def formatRule(rule):
-    alfaChars = ['a', 'b', 'c', 'd' ]
-    res = '  ' + str(rule["classification"]) + ' - '
-    for condition in rule["rules"]:
-        res = res + alfaChars[condition['alfa'] - 1] + str(condition['alfaValue']) + ' + '
-    return res[:-3]
 
 print()
 print("Rules:")
